@@ -1,6 +1,6 @@
 ---
 title: "Time Series Forecasting with KNN in R: the tsfknn Package"
-author: "Francisco Martinez, Maria P. Frias, Maria D. Perez-Godoy, Antonio J. Rivera"
+author: "Francisco Martinez, Maria P. Frias, Francisco Charte, Antonio J. Rivera"
 date: "`r Sys.Date()`"
 output: 
   html_document:
@@ -18,7 +18,7 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 
 
 In this paper the **tsfknn** package for time series forecasting using KNN
-regression is described. The package allows, with only a function, to specify
+regression is described. The package allows, with only one function, to specify
 the KNN model and to generate the forecasts. The user can choose among different
 multi-step ahead strategies and among different functions to aggregate the targets of the nearest neighbors. It is also possible to consult the model used in the prediction and to obtain a graph including the forecast and the nearest neighbors used by KNN.
 
@@ -27,11 +27,11 @@ multi-step ahead strategies and among different functions to aggregate the targe
 Time series forecasting has been performed traditionally using statistical methods such as ARIMA models or exponential smoothing. 
 However, the last decades have witnessed the use of computational intelligence
 techniques to forecast time series. Although artificial neural networks is the
-more prominent machine learning technique used in time series forecasting,
-other approaches, such as Gaussian Processess or KNN, have also been applied.
+most prominent machine learning technique used in time series forecasting,
+other approaches, such as Gaussian Process or KNN, have also been applied.
 Compared with classical statistical models, computational intelligence methods exhibit interesting features, such as their nonlinearity or the lack of an underlying model, that is, they are non-parametric.
 
-Statistical methodologies for time series forecasting are present in CRAN as excellent packages. For example, the **forecast** package includes implementations of ARIMA, exponential smoothing, the theta method or basic techniques, such as the naive approach, that can be used as benchmark methods. On the other hand, although a great variety of computational intelligence approaches for regression are available in R (see, for example, the **caret** package), these approaches cannot be directly applied to time series forecasting. Fortunately, some new packages are filling this gap. For example,  the **nnfor** package or the `nntar` function from the **forecast** package allow to predict time series using artificial neural networks.
+Statistical methodologies for time series forecasting are present in CRAN as excellent packages. For example, the **forecast** package includes implementations of ARIMA, exponential smoothing, the theta method or basic techniques, such as the naive approach, that can be used as benchmark methods. On the other hand, although a great variety of computational intelligence approaches for regression are available in R (see, for example, the **caret** package), these approaches cannot be directly applied to time series forecasting. Fortunately, some new packages are filling this gap. For example,  the **nnfor** package or the `nnetar` function from the **forecast** package allow to predict time series using artificial neural networks.
 
 KNN is a very popular algorithm used in classification and regression.
 This algorithm simply stores a collection of examples. Each
@@ -97,21 +97,21 @@ Let us see the main arguments of this function:
 `knn_forecasting` is very handy because, as commented above, it builds the
 KNN model and then uses the model to predict the time series. This function
 returns a `knnForecast` object with information of the model and its 
-prediction. As we have seen above, your can use the function `knn_examples` to see the examples associated with the model. You can also consult the predicition or get a plot through the `knnForecast` object:
+prediction. As we have seen above, you can use the function `knn_examples` to see the examples associated with the model. You can also consult the prediction or get a plot through the `knnForecast` object:
 
 ```{r}
 pred$prediction
 plot(pred)
 ```
 
-You can also consult how the prediction was made. That is, you can consult the instance whose target was predicted and its nearest neighbors. This information is obtained with the `nearest_neighbors` function applied to a `knnForecast`object:
+You can also consult how the prediction was made. That is, you can consult the instance whose target was predicted and its nearest neighbors. This information is obtained with the `nearest_neighbors` function applied to a `knnForecast` object:
 
 ```{r}
 nearest_neighbors(pred)
 ```
 
 Because we have used lags 1-2 as features, the features associated with the
-next future value of the time series are the two last values of the time series (vector 
+next future value of the time series are the last two values of the time series (vector 
 $[7, 8]$). The two most similar examples (nearest neighbors) of this instance are vectors
 $[6, 7]$ and $[5, 6]$, whose targets (8 and 7) are averaged to produce the
 prediction 7.5. You can obtain a nice graph including the instance, its  nearest neighbors and the prediction:
@@ -123,8 +123,8 @@ autoplot(pred, highlight = "neighbors")
 
 As can be observed, each nearest neighbor has been plotted in a different plot (you can also select to get all the nearest neighbors in the same plot). The neighbors in the plots are sorted according to their distance to the instance, being the neighbor in the top plot the nearest neighbor.
 
-By the way, this artificial example of a time series with a constant lineal trend
-illustrates the fact that KNN is not suitable for prediciting time series with a global
+By the way, this artificial example of a time series with a constant linear trend
+illustrates the fact that KNN is not suitable for predicting time series with a global
 trend. This is because KNN predicts an aggregation of historical
 values of the time series. Therefore, in order to predict a time series with
 global trend some detrending scheme should be used.
@@ -167,7 +167,7 @@ autoplot(pred, highlight = "neighbors", faceting = FALSE)
 ```
 
 The prediction is the average of the target vectors of the two nearest neighbors. As can be observed, we have chosen to see all the nearest neighbors in the
-same graph. Because we are working with a monthly time series, we have thought that lags 1-12 are a suitable choice for selecting the features of the examples. In this case, the 12 last values of the time series are the new
+same graph. Because we are working with a monthly time series, we have thought that lags 1-12 are a suitable choice for selecting the features of the examples. In this case, the last 12 values of the time series are the new
 instance whose target has to be predicted. The two sequences of 12 consecutive
 values most similar to this instance are found (in blue) and their subsequent 12 values (in green) are averaged to obtain the prediction (in red).
 
@@ -187,11 +187,11 @@ pred <- knn_forecasting(timeS, h = 2, lags = 1:4, k = 2, msas = "recursive")
 autoplot(pred, highlight = "neighbors")
 ```
 
-In this examples we have used lags 1-4 to specify the features of an example. To predict the first future point the last 4 values of the time series are used as "its features". To predict the second future point "its features" are the last three values of the time series and the prediction for the first future point. In the top graph the prediction for the first future point can be seen and in the bottom graph the prediction for the second point.
+In this example we have used lags 1-4 to specify the features of an example. To predict the first future point the last 4 values of the time series are used as "its features". To predict the second future point "its features" are the last three values of the time series and the prediction for the first future point. In the top graph the prediction for the first future point can be seen and in the bottom graph the prediction for the second point.
 
 # Additional features
 
-In this section several additional features of our packaged are described.
+In this section several additional features of our package are described.
 
 ## Combination and distance function
 
@@ -210,8 +210,7 @@ A third strategy is to use several KNN models with different *k* values. Each
 KNN 
 model generates its forecasts and the forecasts of the different models are 
 averaged to produce the final forecast. This strategy is based on the success of
-model combination in time series forecating. This way, the use of a time consuming optimization tool is avoided and the forecasts are not based on an unique, heuristic *k* value. Our package allows the use of this strategy 
-specifying a vector of *k* values:
+model combination in time series forecasting. This way, the use of a time consuming optimization tool is avoided and the forecasts are not based on an unique, heuristic *k* value. In our package you can use of this strategy specifying a vector of *k* values:
 
 ```{r}
 pred <- knn_forecasting(ldeaths, h = 12, lags = 1:12, k = c(2, 4))
@@ -222,12 +221,12 @@ plot(pred)
 ## Automatic forecasting
 
 Sometimes a great number of time series have to be forecast. In that situation, an automatic way of generating the forecasts it is very useful. Our package is able to automatically choose *k* and the lags used as features. *k* is selected
-as the square root of the number of examples. The lags are selected as 1:*f*, where *f* es the number of periods in the time series, for example, 4 for quarterly data.
+as the square root of the number of examples. The lags are selected as 1:*f*, where *f* is the number of periods of the time series, for example, 4 for quarterly data.
 
 
 
 # Conclusions
 
 In R, just a few packages apply computational intelligence regression methods to time series forecasting. In this paper we have presented the **tsfknn** package that allows to forecast a time series using KNN regression. The interface of the
-package is quite simple, with only a function the user can specify a KNN model
+package is quite simple, with only one function the user can specify a KNN model
 and predict a time series. Furthermore, several graphs can be generated illustrating how the prediction has been computed.

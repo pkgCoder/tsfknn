@@ -96,13 +96,24 @@ knn_model <- function(timeS, lags, k, nt = 1, cf = "mean") {
 # regression(model, c(1, 2))
 regression <- function(model, example) {
   distances <- apply(model$examples$patterns, 1,
-                     function(p) sqrt(sum((p - example) ^ 2)))
+                     function(p) sum((p - example) ^ 2))
   o <- order(distances)
   values <- model$examples$targets[o[1:model$k], , drop = F]
   if (model$cf == "mean") {
     prediction <- unname(colMeans(values))
   } else if (model$cf == "median") {
     prediction <- apply(values, 2, stats::median)
+  } else if (model$cf == "weighted") {
+    if (distances[o[1]] == 0) {
+      prediction <- unname(values[1, ])
+    } else {
+      reciprocal_d <- 1 / distances[o[1:model$k]]
+      prediction <- numeric(ncol(model$example$targets))
+      for (k in seq(model$k)) {
+        prediction <- prediction + values[k, ] * reciprocal_d[k]
+      }
+      prediction <- prediction / sum(reciprocal_d)
+    }
   }
   list(
     prediction = prediction,

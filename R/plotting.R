@@ -64,9 +64,9 @@ autoplot.knnForecast <- function(forecast, highlight = "none", faceting = TRUE) 
               neighbors")
     } else if (forecast$msas == "recursive") {
       return(plot_recursive(timeS, pred, forecast, faceting))
-     } else {
+    } else {
       return(plot_mimo(timeS, pred, forecast, faceting))
-     }
+    }
   }
 
   p <- ggplot2::ggplot(timeS, ggplot2::aes_string('x', 'y'))
@@ -138,7 +138,8 @@ plot_neighbours <- function(timeS, pred, pred2, example, features, targets,
   p <- p + ggplot2::geom_line()
 
   # plot the forecast
-  p <- p + ggplot2::geom_line(data = pred, colour = my_colours("red"))
+  if (nrow(pred) > 1)
+    p <- p + ggplot2::geom_line(data = pred, colour = my_colours("red"))
   p <- p + ggplot2::geom_point(ggplot2::aes(colour = "Forecast",
                                             shape = "Forecast"), data = pred2)
 

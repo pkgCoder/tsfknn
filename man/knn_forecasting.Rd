@@ -4,8 +4,8 @@
 \alias{knn_forecasting}
 \title{Time series forecasting using KNN regression}
 \usage{
-knn_forecasting(timeS, h, lags = NULL, k = NULL, msas = "MIMO",
-  cf = "mean")
+knn_forecasting(timeS, h, lags = NULL, k = NULL, msas = c("MIMO",
+  "recursive"), cf = c("mean", "median", "weighted"))
 }
 \arguments{
 \item{timeS}{A numeric vector or time series of class \code{ts}.}
@@ -20,12 +20,13 @@ k values can also be used. In that case, the forecast is the average
 of the forecasts produced by the different models with the different k
 parameters.}
 
-\item{msas}{A string indicating the Multiple Step Ahead Strategy used when
-more than one value is predicted. It can be "recursive" or "MIMO".}
+\item{msas}{A string indicating the Multiple-Step Ahead Strategy used when
+more than one value is predicted. It can be "recursive" or "MIMO" (the
+default).}
 
 \item{cf}{A string. It indicates the combination function used to aggregate
-the targets associated with the nearest neighbors. It can be "mean" or
-"median".}
+the targets associated with the nearest neighbors. It can be "median",
+"weighted" or "mean" (the default).}
 }
 \value{
 An object of class "knnForecast".
@@ -33,7 +34,8 @@ An object of class "knnForecast".
 \description{
 It applies KNN regression to forecast the future values of a time series.
 The lags used as autoregressive variables are set with the \code{lags}
-parameter.
+parameter. If the user does not set the number of nearest neighbors and
+the lags, these values are selected automatically.
 }
 \examples{
 pred <- knn_forecasting(USAccDeaths, h = 12, lags = 1:12, k = 2)
