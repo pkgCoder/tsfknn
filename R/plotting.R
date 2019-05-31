@@ -10,11 +10,7 @@ my_colours <- function(name) {
 #' @importFrom graphics plot
 #' @export
 plot.knnForecast <- function(x, y, ...) {
-  timeS <- c(x$model$ts, x$prediction)
-  timeS <- stats::ts(timeS,
-                     start = stats::start(x$model$ts),
-                     frequency = stats::frequency(x$model$ts)
-  )
+  timeS <- combine(x$model$ts, x$prediction)
   graphics::plot(timeS, type = "n", ylab = "")
   graphics::lines(x$model$ts, type = "o", pch = 20)
   graphics::lines(x$prediction, type = "o",
@@ -33,8 +29,8 @@ plot.knnForecast <- function(x, y, ...) {
 #'     "neighbors".
 #' @param faceting Logical. This applies only if the \code{highlight}
 #'     parameter is set to "neighbors". It indicates whether the different
-#'     nearest neighbors should be seen in different plots (True) or in one
-#'     plot.
+#'     nearest neighbors should be seen in different plots (\code{TRUE}) or in
+#'     one plot.
 #'
 #' @return The ggplot object representing a graph with the forecast.
 #'
