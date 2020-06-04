@@ -1,11 +1,11 @@
 #' Assessing forecasting accuracy with rolling origin
 #'
-#' It uses the model and the time series associated to the \code{knnForecast}
+#' It uses the model and the time series associated with the \code{knnForecast}
 #' object to asses the forecasting accuracy of the model using the last
 #' \code{h} values of the time series to build test sets applying a rolling
 #' origin evaluation.
 #'
-#' This function assess the forecast accuracy of the model used by the
+#' This function assesses the forecast accuracy of the model used by the
 #' \code{knnForecast} object. It uses \code{h} different test and training
 #' sets. The first test set consists of the last \code{h} values of the time
 #' series (the training set is formed by the previous values). The next test
@@ -48,8 +48,6 @@ rolling_origin <- function(knnf, h = NULL, rolling = TRUE) {
                               lags = rev(knnf$model$lags),
                               msas = knnf$msas
   )
-  print(max_k)
-  print(nte)
   if (max_k > nte)
     stop(paste("Impossible to create", max_k, "examples"))
 
@@ -68,19 +66,19 @@ rolling_origin <- function(knnf, h = NULL, rolling = TRUE) {
   for (hor in horizons) {
     tt <- train_test(timeS, hor)
     test_sets[ind, 1:hor] <- tt$test
-    if (knnf$msas == "MIMO" || length(horizons) == 1) {
-      pred <- knn_forecasting(tt$training,
+#   if (knnf$msas == "MIMO" || length(horizons) == 1) {
+    pred <- knn_forecasting(tt$training,
                             h = hor,
                             lags = rev(knnf$model$lags),
                             k = knnf$model$k,
                             msas = knnf$msas,
                             cf = knnf$model$cf)
-      predictions[ind, 1:hor] <- pred$prediction
-    } else { # optimization for recursive forecasting
-      knnf$model$examples$patterns <- knnf$model$examples$patterns[1:(nrow(knnf$model$examples$patterns) - 1), , drop = FALSE]
-      knnf$model$examples$targets <- knnf$model$examples$targets[1:(nrow(knnf$model$examples$targets) - 1), , drop = FALSE ]
-      predictions[ind, 1:hor] <- predict(knnf, h = hor)$prediction
-    }
+    predictions[ind, 1:hor] <- pred$prediction
+    # } else { # optimization for recursive forecasting
+    #   knnf$model$examples$patterns <- knnf$model$examples$patterns[1:(nrow(knnf$model$examples$patterns) - 1), , drop = FALSE]
+    #   knnf$model$examples$targets <- knnf$model$examples$targets[1:(nrow(knnf$model$examples$targets) - 1), , drop = FALSE ]
+    #   predictions[ind, 1:hor] <- predict(knnf, h = hor)$prediction
+    # }
     ind <- ind - 1
   }
   colnames(test_sets)   <-  paste("h=", 1:h, sep = "")
@@ -120,7 +118,7 @@ rolling_origin <- function(knnf, h = NULL, rolling = TRUE) {
 #' It uses a test set generated with the function \code{\link{rolling_origin}}
 #' and plots its forecast.
 #'
-#' @param x the object obtained from a call to x \code{\link{rolling_origin}}.
+#' @param x the object obtained from a call to \code{\link{rolling_origin}}.
 #'
 #' @param h an integer. The forecasting horizon. If \code{NULL}, the maximum
 #'    forecasting horizon of all the test sets is used.
