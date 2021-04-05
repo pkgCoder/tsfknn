@@ -4,7 +4,7 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 
 ## -----------------------------------------------------------------------------
 library(tsfknn)
-pred <- knn_forecasting(ts(1:8), h = 1, lags = 1:2, k = 2)
+pred <- knn_forecasting(ts(1:8), h = 1, lags = 1:2, k = 2, transform = "none")
 knn_examples(pred)
 
 ## -----------------------------------------------------------------------------
@@ -31,6 +31,14 @@ autoplot(pred, highlight = "neighbors")
 pred <- knn_forecasting(ldeaths, h = 12, lags = 1:12, k = c(2, 4))
 pred$prediction
 plot(pred)
+
+## -----------------------------------------------------------------------------
+set.seed(5)
+timeS <- ts(1:10 + rnorm(10, 0, .2))
+pred <- knn_forecasting(timeS, h = 3, transform = "none")
+plot(pred)
+pred2 <- knn_forecasting(timeS, h = 3, transform = "additive")
+plot(pred2)
 
 ## -----------------------------------------------------------------------------
 pred <- knn_forecasting(ts(1:20), h = 4, lags = 1:2, k = 2)
