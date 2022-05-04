@@ -43,7 +43,7 @@
 #' @export
 knn_forecasting <- function(timeS, h, lags = NULL, k = c(3, 5, 7),
                             msas = c("recursive", "MIMO"),
-                            cf = c("mean", "median", "weighted"),
+                            cf = c("mean", "median", "weighted", "weighted_median","semi_iqr", "iqr", "harmonic_mean","geometric_mean","q1","q3"),
                             transform = c("additive", "multiplicative", "none")) {
   # Check timeS parameter
   stopifnot(stats::is.ts(timeS) || is.vector(timeS, mode = "numeric"))
