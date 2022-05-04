@@ -77,6 +77,44 @@ knn_model <- function(timeS, lags, k, nt = 1, cf = "mean", transform) {
   )
 }
 
+
+harmonic_mean = function(values){
+  reciprocal = 1/values 
+  number_obs  = length(values)
+ return (number_obs / sum(reciprocal))
+}
+
+geometric_mean = function(values){
+  prod_obs = prod(values)
+  N = length(values)
+  g_mean = (prod_obs)^(1/N)
+  return (g_mean)
+}
+
+semi_iqr = function(values){
+  iqr_val  = quantile(values, c(.25,.75))
+  semi_iqr_val  = (iqr_val[2]-iqr_val[1])/2
+  return (semi_iqr_val)
+}
+
+iqr = function(values){
+  iqr_val  = quantile(values, c(.25,.75))
+  iqr_val  = (iqr_val[2]-iqr_val[1])
+  return (iqr_val)
+}
+
+
+
+fqr = function(values){
+   fqr_val = unname(quantile(values, c(.25))[1])
+  return (fqr_val)
+}
+
+tqr = function(values){
+  tqr_val = unname(quantile(values,c(.75))[1])
+  return (tqr_val)
+}
+
 # Predicts one example doing KNN regression.
 #
 # @param model The KNN model (its class should be knnModel).
@@ -93,7 +131,21 @@ regression <- function(model, example, k) {
     prediction <- unname(colMeans(values))
   } else if (model$cf == "median") {
     prediction <- apply(values, 2, stats::median)
-  } else if (model$cf == "weighted") {
+  } else if (model$cf == "weighted_median") {
+    prediction <- apply(values, 2, stats::median)
+  } else if (model$cf == "semi_iqr") {
+    prediction <- apply(values, 2, semi_iqr)
+  } else if (model$cf == "iqr") {
+    prediction <- apply(values, 2,iqr )
+  } else if (model$cf == "harmonic_mean") {
+    prediction <- apply(values, 2,harmonic_mean )
+  } else if (model$cf == "geometric_mean") {
+    prediction <- apply(values, 2, geometric_mean)
+  } else if (model$cf == "q1") {
+    prediction <- apply(values, 2, fqr)
+  } else if (model$cf == "q3") {
+    prediction <- apply(values, 2,tqr )
+  }  else if (model$cf == "weighted") {
     if (r$distances[r$indexes[1]] == 0) {
       prediction <- unname(values[1, ])
     } else {
