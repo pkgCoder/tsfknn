@@ -115,6 +115,8 @@ tqr = function(values){
   return (tqr_val)
 }
 
+
+
 # Predicts one example doing KNN regression.
 #
 # @param model The KNN model (its class should be knnModel).
@@ -130,8 +132,6 @@ regression <- function(model, example, k) {
   if (model$cf == "mean") {
     prediction <- unname(colMeans(values))
   } else if (model$cf == "median") {
-    prediction <- apply(values, 2, stats::median)
-  } else if (model$cf == "weighted_median") {
     prediction <- apply(values, 2, stats::median)
   } else if (model$cf == "semi_iqr") {
     prediction <- apply(values, 2, semi_iqr)
@@ -156,6 +156,16 @@ regression <- function(model, example, k) {
       }
       prediction <- prediction / sum(reciprocal_d)
     }
+  } 
+  else if (model$cf == "weighted_median") {
+   reciprocal_d <- 1 / r$distances[r$indexes]
+    if (length(values) == length(reciprocal_d)){
+      prediction <- matrixStats::weightedMedian(values,reciprocal_d )
+    }else{
+      prediction <- apply(values, 2,matrixStats::weightedMedian, w=reciprocal_d)
+    }
+   
+    
   }
   list(
     prediction = prediction,
