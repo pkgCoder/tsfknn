@@ -1,3 +1,4 @@
+
 #' @export
 print.knnForecast <- function (x, ...) {
   cat("\nCall:  ",
@@ -29,7 +30,7 @@ print.knnForecast <- function (x, ...) {
   cat("Autoregressive lags:", rev(x$model$lags), "\n")
   cat("Number of examples:", nrow(x$model$examples$patterns), "\n")
   cat("Targets are combined using ")
-  if (x$model$cf %in% c("mean", "median")) {
+  if (x$model$cf %in% c("mean", "median","weighted_median","geometric_mean", "harmonic_mean","q1","q3","semi_iqr")) {
     cat("the", x$model$cf, "function.\n")
   } else {
     cat("a weighted average.\n")
@@ -85,7 +86,7 @@ print.summary.knnForecast <- function (x, ...) {
   cat("Autoregressive lags:", x$lags, "\n")
   cat("Number of examples:", x$nneighbors, "\n")
   cat("Targets are combined using ")
-  if (x$cf %in% c("mean", "median")) {
+  if (x$cf %in% c("mean", "median","weighted_median","geometric_mean", "harmonic_mean","q1","q3","semi_iqr")) {
     cat("the", x$cf, "function.\n")
   } else {
     cat("a weighted average.\n")
