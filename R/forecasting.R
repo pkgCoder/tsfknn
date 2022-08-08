@@ -249,7 +249,6 @@ knn_aic = function(pred,ro){
   val
 }
 
-
 #' Examples of the model associated with a prediction
 #'
 #' It allows to see the examples of the model associated to a
