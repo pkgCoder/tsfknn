@@ -104,6 +104,8 @@ knn_forecasting <- function(timeS, h, lags = NULL, k = c(3, 5, 7),
     fit <- knn_model(timeS, lags = lags, k = k, nt = h, cf = cf, transform)
   }
   fit$k <- k
+
+  
   r <- structure(
     list(
       call = match.call(),
@@ -224,6 +226,27 @@ nearest_neighbors_mimo <- function(forecast) {
     instance = example,
     nneighbors = r
   ))
+}
+ro=rolling_origin
+#' KNN AIC 
+#'
+#' It allows you to calculate the aic of the model associated to a
+#' \code{knnForecast} object.
+#'
+#' @param forecast A \code{knnForecast} object.
+#' @return Return the Aic of the \code{knnForecast} object.
+#'
+#' @examples
+#' pred <- knn_forecasting(ts(1:8), h = 1, lags = 1:2, k = 2)
+#' knn_aic(pred)
+#' @export
+knn_aic = function(pred,ro){
+  ro= rolling_origin(pred, h=as.integer(0.35 *length(pred$model$examples$targetsI)),rolling = F)
+  sum_of_squared = sum(ro$errors^2)
+  n= length(ro$errors)
+  mse = (sum_of_squared/n)
+  val =n * log(mse) + 2 *(length(pred$model$lags)+1)
+  val
 }
 
 #' Examples of the model associated with a prediction
