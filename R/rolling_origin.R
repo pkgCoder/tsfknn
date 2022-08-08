@@ -100,6 +100,14 @@ rolling_origin <- function(knnf, h = NULL, rolling = TRUE) {
   h_accu <- sapply(1:h, accu)
   colnames(h_accu) <-  paste("h=", 1:h, sep = "")
   rownames(h_accu) <- c("RMSE", "MAE", "MAPE")
+  aic <-  function(pred=knnf){
+    ro= rolling_origin(pred, h=as.integer(0.35 *length(pred$model$examples$targetsI)),rolling = F)
+    sum_of_squared = sum(ro$errors^2)
+    n= length(ro$errors)
+    mse = (sum_of_squared/n)
+    val =n * log(mse) + 2 *(length(pred$model$lags)+1)
+    val
+  }
 
   structure(
     list(
@@ -108,7 +116,8 @@ rolling_origin <- function(knnf, h = NULL, rolling = TRUE) {
       predictions = predictions,
       errors = test_sets - predictions,
       global_accu = global_accu,
-      h_accu = h_accu
+      h_accu = h_accu,
+      h=aic
     ),
     class = "knnForecastRO"
   )
@@ -148,5 +157,4 @@ plot.knnForecastRO <- function(x, h = NULL, ...) {
   graphics::lines(prediction, col = my_colours("red"))
   graphics::points(prediction, col = my_colours("red"), pch = 20)
 }
-
 
