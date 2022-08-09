@@ -117,7 +117,7 @@ rolling_origin <- function(knnf, h = NULL, rolling = TRUE) {
       errors = test_sets - predictions,
       global_accu = global_accu,
       h_accu = h_accu,
-      h=aic
+      aic=aic
     ),
     class = "knnForecastRO"
   )
