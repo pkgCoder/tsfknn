@@ -163,10 +163,122 @@ regression <- function(model, example, k) {
       prediction <- matrixStats::weightedMedian(values,reciprocal_d )
     }else{
       prediction <- apply(values, 2,matrixStats::weightedMedian, w=reciprocal_d)
+    }}
+  else if (model$cf == "w.fqr") {
+    reciprocal_d <- 1 / r$distances[r$indexes]
+    if (length(values) == length(reciprocal_d)){
+      prediction <-  spatstat.geom::weighted.quantile(values, 
+                                                      reciprocal_d,
+                                                      probs=.25,
+                                                      na.rm = TRUE, 
+                                                      type=4, collapse=TRUE)
+    }else{
+      prediction <- apply(values, 2,spatstat.geom::weighted.quantile,
+                          w=reciprocal_d,
+                          probs=.25,
+                          na.rm=T,
+                          type=4,
+                          collapse=T
+      )
     }
-   
+    }
+  else if (model$cf == "w.tqr") {
+    reciprocal_d <- 1 / r$distances[r$indexes]
+    if (length(values) == length(reciprocal_d)){
+      prediction <-  spatstat.geom::weighted.quantile(values, 
+                                                      reciprocal_d,
+                                                      probs=.75,
+                                                      na.rm = TRUE, 
+                                                      type=4, collapse=TRUE)
+    }else{
+      prediction <- apply(values, 2,spatstat.geom::weighted.quantile,
+                          w=reciprocal_d,
+                          probs=.75,
+                          na.rm=T,
+                          type=4,
+                          collapse=T
+      )
+    }
+  }
+  else if (model$cf == "w.iqr") {
+    
+    reciprocal_d <- 1 / r$distances[r$indexes]
+    if (length(values) == length(reciprocal_d)){
+      prediction <-  spatstat.geom::weighted.quantile(values, 
+                                                      reciprocal_d,
+                                                      probs=c(.25,.75),
+                                                      na.rm = TRUE, 
+                                                      type=4, collapse=TRUE)
+      prediction <- unname(prediction[2]-prediction[1])
+    }else{
+      p <- apply(values, 2,spatstat.geom::weighted.quantile,
+                          w=reciprocal_d,
+                          probs=c(.25,.75),
+                          na.rm=T,
+                          type=4,
+                          collapse=T
+      )
+      prediction <- unname(p[2]-p[1])
+    }
+  }
+
+    else if (model$cf == "w.semi_iqr") {
+    
+    reciprocal_d <- 1 / r$distances[r$indexes]
+    if (length(values) == length(reciprocal_d)){
+      prediction <-  spatstat.geom::weighted.quantile(values, 
+                                                      reciprocal_d,
+                                                      probs=c(.25,.75),
+                                                      na.rm = TRUE, 
+                                                      type=4, collapse=TRUE)
+      prediction <- unname(prediction[2]-prediction[1])/2
+    }else{
+      p <- apply(values, 2,spatstat.geom::weighted.quantile,
+                 w=reciprocal_d,
+                 probs=c(.25,.75),
+                 na.rm=T,
+                 type=4,
+                 collapse=T
+      )
+      prediction <- unname(p[2]-p[1])/2
+    }
+  }
+  else if (model$cf == "w.var") {
+    reciprocal_d <- 1 / r$distances[r$indexes]
+    if (length(values) == length(reciprocal_d)){
+      prediction <- spatstat.geom::weighted.var(values,reciprocal_d )
+    }else{
+      prediction <- apply(values, 2,spatstat.geom::weighted.var, w=reciprocal_d)
+    }
+    
     
   }
+
+  else if (model$cf == "w.std") {
+    reciprocal_d <- 1 / r$distances[r$indexes]
+    if (length(values) == length(reciprocal_d)){
+      prediction <- sqrt(spatstat.geom::weighted.var(values,reciprocal_d ))
+    }else{
+      prediction <- sqrt(apply(values, 2,spatstat.geom::weighted.var, w=reciprocal_d))}
+  }
+  else if (model$cf == "t.var") {
+    reciprocal_d <- 1 / r$distances[r$indexes]
+    if (length(values) == length(reciprocal_d)){
+      prediction <- var(values)
+    }else{
+      prediction <- (apply(values, 2,var))
+    }
+  }
+
+   else if (model$cf == "std.var") {
+    reciprocal_d <- 1 / r$distances[r$indexes]
+    if (length(values) == length(reciprocal_d)){
+      prediction <- sqrt(var(values))
+    }else{
+      prediction <- sqrt(apply(values, 2,var))
+    }}
+  
+  
   list(
     prediction = prediction,
     neighbors = model$examples$targetsI[r$indexes]
