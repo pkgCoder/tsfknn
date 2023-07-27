@@ -115,6 +115,43 @@ tqr = function(values){
   return (tqr_val)
 }
 
+weighted_harmonic_mean <- function(values, weights) {
+  if (length(values) != length(weights)) {
+    stop("Number of values and weights should be equal.")
+  }
+  
+  if (any(values < 0) || any(weights < 0)) {
+    stop("Values and weights should be non-negative.")
+  }
+  
+  if (sum(weights) == 0) {
+    stop("Sum of weights should be non-zero.")
+  }
+
+  
+  weighted_mean <- sum(weights / values) / sum(weights / values^2)
+  
+  return(weighted_mean)
+}
+
+weighted_geometric_mean <- function(values, weights) {
+  if (length(values) != length(weights)) {
+    stop("Number of values and weights should be equal.")
+  }
+  
+  if (any(values < 0) || any(weights < 0)) {
+    stop("Values and weights should be non-negative.")
+  }
+  
+  if (sum(weights) == 0) {
+    stop("Sum of weights should be non-zero.")
+  }
+  
+  product <- prod(values^weights)
+  weighted_mean <- product^(1/sum(weights))
+  
+  return(weighted_mean)
+}
 
 
 # Predicts one example doing KNN regression.
@@ -277,6 +314,22 @@ regression <- function(model, example, k) {
     }else{
       prediction <- sqrt(apply(values, 2,var))
     }}
+    else if (model$cf == "w.geom") {
+    reciprocal_d <- 1 / r$distances[r$indexes]
+    if (length(values) == length(reciprocal_d)){
+      prediction <- weighted_geometric_mean(values,reciprocal_d )
+    }else{
+      prediction <- apply(values, 2,weighted_geometric_mean, w=reciprocal_d)
+    }
+  }
+  else if (model$cf == "w.harm") {
+    reciprocal_d <- 1 / r$distances[r$indexes]
+    if (length(values) == length(reciprocal_d)){
+      prediction <- weighted_harmonic_mean(values,reciprocal_d )
+    }else{
+      prediction <- apply(values, 2,weighted_harmonic_mean, w=reciprocal_d)
+    }
+  }
   
   
   list(
