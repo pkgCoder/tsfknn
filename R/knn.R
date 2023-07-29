@@ -116,17 +116,17 @@ tqr = function(values){
 }
 
 weighted_harmonic_mean <- function(values, weights) {
-  if (length(values) != length(weights)) {
-    stop("Number of values and weights should be equal.")
-  }
+ # if (length(values) != length(weights)) {
+ #   stop("Number of values and weights should be equal.")
+  #}
   
-  if (any(values < 0) || any(weights < 0)) {
-    stop("Values and weights should be non-negative.")
-  }
+  #if (any(values < 0) || any(weights < 0)) {
+  #  stop("Values and weights should be non-negative.")
+  #}
   
-  if (sum(weights) == 0) {
-    stop("Sum of weights should be non-zero.")
-  }
+  #if (sum(weights) == 0) {
+  #  stop("Sum of weights should be non-zero.")
+  #}
 
   
   weighted_mean <- sum(weights / values) / sum(weights / values^2)
@@ -135,17 +135,17 @@ weighted_harmonic_mean <- function(values, weights) {
 }
 
 weighted_geometric_mean <- function(values, weights) {
-  if (length(values) != length(weights)) {
-    stop("Number of values and weights should be equal.")
-  }
+ # if (length(values) != length(weights)) {
+  #  stop("Number of values and weights should be equal.")
+ # }
   
-  if (any(values < 0) || any(weights < 0)) {
-    stop("Values and weights should be non-negative.")
-  }
+ # if (any(values < 0) || any(weights < 0)) {
+  #  stop("Values and weights should be non-negative.")
+  #}
   
-  if (sum(weights) == 0) {
-    stop("Sum of weights should be non-zero.")
-  }
+  #if (sum(weights) == 0) {
+   # stop("Sum of weights should be non-zero.")
+  #}
   
   product <- prod(values^weights)
   weighted_mean <- product^(1/sum(weights))
